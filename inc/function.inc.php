@@ -9,9 +9,9 @@ require_once 'constants.inc.php';
  */
 function parseChatFile($filename){
     $error_flag = false;
-    $errors = [];
-    $chat = [];
-    $names_array = [];
+    $errors = array();
+    $chat = array();
+    $names_array = array();
 
     $chat_file_path = 'conversations/' . $filename;
 
@@ -24,55 +24,50 @@ function parseChatFile($filename){
             addErrorMessage($errors, $error_flag, 'Oh Snap!<br>Some technical glitch, it\'ll be resolved soon!');
         } else {
             $index = 0;
-            $first_message = true;
 
             while (($line = fgets($file_handle)) !== false){
-                $line_attributes = explode('-', ($line));
-                if(sizeof($line_attributes) > 0) {
-                    $first_message = true;
-                }
+            	$chat_array = parseChatString($line);
+            	
+            	if(!$chat_array) {
+            		//skip invalid lines
+            		continue;
+            	}
 
-                $converted_timestamp = getConvertedTimestamp($line_attributes[0]);
+                $converted_timestamp = getConvertedTimestamp($chat_array['timestamp']);
                 if($converted_timestamp === false)
-                    $time_attribute = $line_attributes[0];
+                    $time_attribute = $chat_array['timestamp'];
                 else
                     $time_attribute = $converted_timestamp;
 
-                unset($line_attributes[0]);
-                $line_attributes = implode('-', $line_attributes);
-                $line_attributes = explode(':', trim($line_attributes));
+                if(array_key_exists('user', $chat_array)) {
+                   $user_attribute = trim($chat_array['user']);
+             	   $user_index = getUserIndex($names_array, $user_attribute);
+                } else {
+                	$user_attribute = false;
+                	$user_index = 0;
+                }
 
-                if(sizeof($line_attributes) == 1)
-                    continue;
-
-                $user_attribute = trim($line_attributes[0]);
-                unset($line_attributes[0]);
-                $line_attributes = implode(':', $line_attributes);
-
-                $text_attribute = trim($line_attributes);
-
-                $user_index = getUserIndex($names_array, $user_attribute);
+                $text_attribute = trim($chat_array['message']);
 
                 if(strtolower($text_attribute) == MEDIA_STRING)
                     $text_attribute = null;
                 else
                     $text_attribute = htmlspecialchars($text_attribute);
 
-                $chat_block = [
+                $chat_block = array(
                     'i' => $user_index,
                     'p' => $text_attribute,
                     't' => $time_attribute
-                ];
+                );
 
                 array_push($chat, $chat_block);
-                $first_message = false;
             }
             // close file handle
             fclose($file_handle);
 
             // delete file
             // yes, i respect privary
-            unlink($chat_file_path);
+            //unlink($chat_file_path);
         }
     }
 
@@ -92,6 +87,33 @@ function parseChatFile($filename){
     }
 
     return $final_response;
+}
+
+/**
+ * Extract Timestamp, Message and User (if available) from message
+ * @param  [string]     $chat_string
+ * @return [array] ('timestamp', 'user', 'message')
+ * 	       [boolean] false if chat_string invalid
+ */
+function parseChatString($chat_string){
+	global  $MESSAGE_DELIMITER;
+	$TIMESTAMP_DELIMITER_POS = strpos($chat_string, $MESSAGE_DELIMITER['timestamp']);
+	$USER_DELIMITER_POS = @strpos($chat_string, $MESSAGE_DELIMITER['user'], $TIMESTAMP_DELIMITER_POS+strlen($MESSAGE_DELIMITER['timestamp']));
+	$chat_array = array();
+	$chat_array['timestamp'] = substr($chat_string, 0, $TIMESTAMP_DELIMITER_POS);
+	if($USER_DELIMITER_POS && $USER_DELIMITER_POS < $TIMESTAMP_DELIMITER_POS + 50) {
+		// user found in string
+		$chat_array['user'] = substr($chat_string, $TIMESTAMP_DELIMITER_POS+strlen($MESSAGE_DELIMITER['timestamp']), $USER_DELIMITER_POS-$TIMESTAMP_DELIMITER_POS-strlen($MESSAGE_DELIMITER['timestamp']));
+		$MESSAGE_START_POS = $USER_DELIMITER_POS + +strlen($MESSAGE_DELIMITER['user']);
+	} else {
+		$MESSAGE_START_POS = $TIMESTAMP_DELIMITER_POS + +strlen($MESSAGE_DELIMITER['timestamp']);
+	}
+	$chat_array['message'] = substr($chat_string, $MESSAGE_START_POS);
+	
+	if (!($TIMESTAMP_DELIMITER_POS && strlen($chat_array['timestamp']) > 0 && strlen($chat_array['message']) > 0)) {
+		$chat_array = false;
+	}	
+	return $chat_array;
 }
 
 /**
