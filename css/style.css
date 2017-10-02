@@ -73,6 +73,13 @@ nav .navbar-nav li a{
     font-size: 14px;
     padding: 0 7px;
 }
+.aloo .user{
+    text-align: justify;
+    word-wrap: break-word;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 0 7px;
+}
 
 .person0{
 	background-color: #FFFFFF;
@@ -80,6 +87,43 @@ nav .navbar-nav li a{
 .person1{
 	background-color: #DCF8C6;
 }
+
+.person2{
+	background-color: #f8dec4;
+}
+
+.person3{
+	background-color: #f8f8c4;
+}
+
+.person4{
+	background-color: #c4f8f8;
+}
+
+.person5{
+	background-color: #c4c4f8;
+}
+
+.person6{
+	background-color: #f8c4f8;
+}
+
+.person7{
+	background-color: #c4f8d1;
+}
+
+.person8{
+	background-color: #f8c4c4;
+}
+
+.person9{
+	background-color: #c0c0c0;
+}
+
+.person999{
+	background-color: #dedede;
+}
+
 .left-margin-20{
 	margin-left: 20%;
 }

@@ -44,7 +44,7 @@ function parseChatFile($filename){
              	   $user_index = getUserIndex($names_array, $user_attribute);
                 } else {
                 	$user_attribute = false;
-                	$user_index = 0;
+                	$user_index = 999;
                 }
 
                 $text_attribute = trim($chat_array['message']);

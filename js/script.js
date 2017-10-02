@@ -55,12 +55,17 @@ function uploadFiles(){
                     } else {
                         chat_line = "*MEDIA HERE*";
                     }
-
-                    if(chat_index % 2 == 0)
-                        var chat_html = '<div class="aloo person' + chat_index + '"><div class="text">' + chat_line + '</div><div class="time">' + chat_time + '</div></div>';
-                    else
-                        var chat_html = '<div class="aloo person' + chat_index + ' left-margin-20"><div class="text">' + chat_line + '</div><div class="time">' + chat_time + '</div></div>';
-
+                    
+                    var chat_html = '<div class="aloo person' + chat_index;
+                    if(chat_index % 2 != 0) {
+                    	chat_html += ' left-margin-20';
+                    }
+                    chat_html += '">';
+                    if(response.users.length > 2 && chat_index != 999) {
+                    	chat_html += '<div class="user">' + response.users[chat_index] + '</div>';
+                    }  
+                    chat_html += '<div class="text">' + chat_line + '</div><div class="time">' + chat_time + '</div></div>';
+                   
                     chat_div.append(chat_html);
                 }
 
