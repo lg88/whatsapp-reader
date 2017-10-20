@@ -17,7 +17,11 @@ if(isset($_FILES[0]['type'])){
         move_uploaded_file($file_tmp, "conversations/" . $file_name);
 
         $url = getCurrentURL(true) . $api_url . $file_name;
-        $response = parseChatFile($file_name);
+        if (isset($_POST['path'])) {
+        	$response = parseChatFile($file_name, $_POST['path']);
+        } else {
+        	$response = parseChatFile($file_name);
+        }
     }
 } else {
     add_error_message($errors, $error_flag, 'Invalid request!');

@@ -52,6 +52,46 @@ nav .navbar-nav li a{
 	white-space: pre-wrap;
 }
 
+.aloo img{
+	width: 100%;
+	padding: 10px;
+}
+
+.aloo .player {
+	position:relative;
+}
+
+.aloo .player video{
+	position: relative;
+	width: 100%;
+	padding: 10px;
+	z-index: 1;
+}
+
+.aloo .player audio{
+	position: relative;
+	width: 100%;
+	padding: 10px;
+	z-index: 1;
+}
+
+.aloo .player img {
+	z-index:10;
+	position: absolute; 
+	top: 50%; 
+	left: 50%;
+	margin-left: -62px;
+	margin-top: -62px;
+	width: 124px; 
+	height: 124px; 
+	opacity: 0.8;
+	cursor: pointer;
+}
+
+.aloo .player img:hover {
+	opacity: 1;
+}
+
 .msg_group_head{
 	background-color: #ccccff;
 	display: inline-block;

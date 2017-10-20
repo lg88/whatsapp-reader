@@ -22,10 +22,14 @@ function uploadFiles(){
     var data = new FormData(),
         submit_button = $('#submit_button')
         file_input = submit_button.parent('form').children('input[name="file"]');
-
+        
     $.each(files, function(key, value){
         data.append(key, value);
     });
+    
+    var mediaPath = $('input[type=text]')[0].value;
+    mediaPath = mediaPath.replace("\\", "/");
+    data.append('path', encodeURI(mediaPath));
 
     $.ajax({
         url: 'upload-file.php',
@@ -44,16 +48,21 @@ function uploadFiles(){
                     users_div = conversation_div.find('#users_list');
 
                 upload_prompt_div.hide();
-
+                
                 for(var chat in response.chat){
                     chat_index = response.chat[chat].i;
                     chat_line = response.chat[chat].p;
                     chat_time = response.chat[chat].t;
-
+                    media_line = response.chat[chat].m
+                    
                     if(chat_line != null){
                         chat_line.replace(/(?:\r\n|\r|\n)/g, '<br>');   
                     } else {
-                        chat_line = "*MEDIA HERE*";
+                    	if (media_line != null) {
+                            chat_line = media_line;
+                    	} else {
+                    		chat_line = "*MEDIA HERE*";
+                    	}
                     }
                     
                     var chat_html = '<div class="aloo person' + chat_index;
@@ -98,6 +107,33 @@ function uploadFiles(){
     });
 }
 
+function play(videoID) { 
+	playPause(videoID, true);
+}
+
+function pause(videoID) { 
+	playPause(videoID, false);
+}
+
+function playPause(videoID, play) { 
+	var myVideoDiv = document.getElementById(videoID);
+	var myVideo= myVideoDiv.getElementsByTagName('video')[0];
+	var myVideoButton= myVideoDiv.getElementsByTagName('img')[0];
+
+	if (play) {
+        jQuery(myVideoButton).hide("slow", function() {
+            myVideo.play();
+        });
+		myVideo.addEventListener('ended',myHandler,false);
+	    function myHandler(e) {
+	    	jQuery(myVideoButton).show();
+	    }
+	}
+    else { 
+        myVideo.pause();
+        jQuery(myVideoButton).show();
+    }
+}
 
 $(document).ready(function(){
     var files;

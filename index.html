@@ -90,6 +90,8 @@
 				Upload Whatsapp Text (.txt) file and view chat in a readable format<br>
 				<form enctype="multipart/form-data">
 					<input type="file" name="file" required>
+					<br />Optional: If you have exported your chat with media attached you can specify the url to the expracted folder (on a webserver)
+					<input type="text" placeholder="C:\path\to\extracted\media" name="path"><br/>
 					<input type="submit" class="btn btn-success" id="submit_button" value="Get Conversation">
 				</form>
 			</div>

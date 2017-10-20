@@ -7,7 +7,7 @@ require_once 'constants.inc.php';
  * @param  [string] $filename 
  * @return [array]
  */
-function parseChatFile($filename){
+function parseChatFile($filename, $localMediaPath = null){
     $error_flag = false;
     $errors = array();
     $chat = array();
@@ -48,8 +48,43 @@ function parseChatFile($filename){
                 }
 
                 $text_attribute = trim($chat_array['message']);
-
-                if(strtolower($text_attribute) == MEDIA_STRING)
+				$media_attribute = null;
+                if($localMediaPath) {
+                	preg_match('/^([0-9a-zA-Z-.\/]+) <.+>/', $text_attribute, $matches);
+                	if (count($matches) > 0) {
+                		$mediaSrc = $matches[1];
+                		$path_parts = pathinfo($mediaSrc);
+                		$mediaSrc = $localMediaPath.'/'.$mediaSrc;
+                		$uid = uniqid();
+						switch(strtolower($path_parts['extension'])) {
+							case "jpg":
+							case "png":
+							case "jpeg":
+								$media_attribute = '<img src="'.$mediaSrc.'" />';
+								break;
+							case "mp4":	
+							case "ogg":
+							case "mpg":
+							case "avi":
+								$media_attribute = '<div class="player" id="'.$uid.'" onClick="pause(\''.$uid.'\')"><img src="img/play_button.png" onClick="play(\''.$uid.'\')" /><video><source src="'.$mediaSrc.'">Your browser does not support the video tag.</video></player>';
+								break;
+							case "m4a":
+							case "aac":
+							case "mp3":
+							case "opus":
+								$media_attribute = '<audio controls><source src="'.$mediaSrc.'">Your browser does not support the audio tag.</audio>';
+								break;
+								
+						}
+						if ($media_attribute != null) {
+							//$media_attribute = '<a target="_blank" href="'.$mediaSrc.'">'.$media_attribute.'</a>';
+						} else {
+							$media_attribute = "Unknown media type";
+						}
+                	}
+                }
+                
+                if($media_attribute)
                     $text_attribute = null;
                 else
                     $text_attribute = htmlspecialchars($text_attribute);
@@ -57,7 +92,8 @@ function parseChatFile($filename){
                 $chat_block = array(
                     'i' => $user_index,
                     'p' => $text_attribute,
-                    't' => $time_attribute
+                    't' => $time_attribute,
+                	'm' => $media_attribute
                 );
 
                 array_push($chat, $chat_block);
