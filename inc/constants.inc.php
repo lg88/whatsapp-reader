@@ -12,6 +12,5 @@ $IGNORE_STRINGS = [
 // This regex needs to define these three groups, please use named groups (t,u,m) as in the sample regex
 // It is important, that the regex can deal with strings where the user is not present, as well as with 
 // usernames containing (parts) of the message delimeters
-// Note
 // Example: /^(?<t>[\d\s,\/:.-]+):\s((?<u>.*?):\s)?(?<m>.+)$/
 $MESSAGE_FORMAT = "/^(?P<t>[\d\s,\/:.-]+(am|pm|AM|PM){0,1}):\s((?P<u>.*?):\s)?(?P<m>.+)$/";

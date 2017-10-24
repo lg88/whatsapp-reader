@@ -103,6 +103,14 @@ function uploadFiles(){
 
             file_input.removeAttr('disabled');
             $('#chat').minEmoji();
+            
+            $('.lazy').Lazy({
+                visibleOnly: true,
+                effect: 'fadeIn',
+                onError: function(element) {
+                    console.log('error loading ' + element.data('src'));
+                }
+            });
         }
     });
 }
@@ -139,7 +147,5 @@ $(document).ready(function(){
     var files;
     
     $('form').on('submit', uploadFiles);
-    $('input[type=file]').on('change', prepareUpload);
-
+    $('input[type=file]').on('change', prepareUpload);    
 })
-

@@ -72,19 +72,19 @@ function parseChatFile($filename, $localMediaPath = null){
 								case "jpg":
 								case "png":
 								case "jpeg":
-									$media_attribute = '<a target="_blank" href="'.$mediaSrc.'"><img src="'.$mediaSrc.'" /></a>';
+									$media_attribute = '<a target="_blank" href="'.$mediaSrc.'"><img class="lazy" src="img/img_placeholder.png" data-src="'.$mediaSrc.'" /></a>';
 									break;
 								case "mp4":
 								case "ogg":
 								case "mpg":
 								case "avi":
-									$media_attribute = '<div class="player" id="'.$uid.'" onClick="pause(\''.$uid.'\')"><img src="img/play_button.png" onClick="play(\''.$uid.'\')" /><video><source src="'.$mediaSrc.'">Your browser does not support the video tag.</video></player>';
+									$media_attribute = '<div class="player" id="'.$uid.'" onClick="pause(\''.$uid.'\')"><img src="img/play_button.png" onClick="play(\''.$uid.'\')" /><video class="lazy"><data-src src="'.$mediaSrc.'">Your browser does not support the video tag.</video></div>';
 									break;
 								case "m4a":
 								case "aac":
 								case "mp3":
 								case "opus":
-									$media_attribute = '<audio controls><source src="'.$mediaSrc.'">Your browser does not support the audio tag.</audio>';
+									$media_attribute = '<audio controls class="lazy"><data-src src="'.$mediaSrc.'">Your browser does not support the audio tag.</audio>';
 									break;
 
 							}
