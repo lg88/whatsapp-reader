@@ -36,14 +36,14 @@ function parseChatFile($filename, $localMediaPath = null){
 				if ($chat_array['multiline'] === true && count($chat) > 0) {
 					// this is part of a multiline message, so append to the last chat block
 					$last_block = array_pop($chat);
-					$last_block['p'] .= '<br />' . htmlspecialchars(trim($chat_array['message']));
+					$last_block['p'] .= '<br />' . escapeTextAndAddLinks(trim($chat_array['message']));
 					array_push($chat, $last_block);
 					continue;
 				} else {
 					// new chat block
 					if(!array_key_exists("timestamp", $chat_array)) {
-											print_r($chat_array);
-						
+						print_r($chat_array);
+
 					}
 					$converted_timestamp = getConvertedTimestamp($chat_array['timestamp']);
 					if($converted_timestamp === false)
@@ -72,7 +72,7 @@ function parseChatFile($filename, $localMediaPath = null){
 								case "jpg":
 								case "png":
 								case "jpeg":
-									$media_attribute = '<img src="'.$mediaSrc.'" />';
+									$media_attribute = '<a target="_blank" href="'.$mediaSrc.'"><img src="'.$mediaSrc.'" /></a>';
 									break;
 								case "mp4":
 								case "ogg":
@@ -99,7 +99,7 @@ function parseChatFile($filename, $localMediaPath = null){
 					if($media_attribute) {
 						$text_attribute = null;
 					} else {
-						$text_attribute = htmlspecialchars($text_attribute);
+						$text_attribute = escapeTextAndAddLinks($text_attribute);
 					}
 					$chat_block = array(
                     'i' => $user_index,
@@ -147,7 +147,7 @@ function parseChatFile($filename, $localMediaPath = null){
 function parseChatString($chat_string){
 	global $MESSAGE_FORMAT;
 	preg_match($MESSAGE_FORMAT, $chat_string, $matches);
-	
+
 	if (count($matches) > 0) {
 		// Regular message
 		$chat_array['multiline'] = false;
@@ -164,7 +164,7 @@ function parseChatString($chat_string){
 	} else {
 		$chat_array = false;
 	}
-	
+
 	return $chat_array;
 }
 
@@ -279,4 +279,20 @@ function getCurrentURL($mode=false){
 	} else {
 		return $url_name;
 	}
+}
+
+/**
+ * 
+ * Escapes user input.
+ * Produces clickable links
+ * @param $text
+ * @return escaped text
+ */
+function escapeTextAndAddLinks($text) {
+	$text = htmlspecialchars($text); // do the escaping
+	
+	// This could be improved (maybe switch to dedicated lib like UrlLinker)
+	$text = preg_replace('/(http[s]{0,1}\:\/\/\S{4,})\s{0,}/ims', '<a href="$1" target="_blank">$1</a> ', $text);
+	
+	return $text;
 }
